@@ -350,201 +350,33 @@ function proceed() {
       stackTop.block.innerHTML += html;
       stackTop.block.innerContent.push(html);
       stackTop.prevOffset = startOffset + tokenLength;
-      addInnerBlock(stackTop.block, stackTop.tokenStart, stackTop.tokenLength, startOffset + tokenLength);
-      offset = startOffset + tokenLength;
-      return true;
-
-    default:
-      // This is an error
-      addFreeform();
-      return false;
-  }
-}
-/**
- * Parse JSON if valid, otherwise return null
- *
- * Note that JSON coming from the block comment
- * delimiters is constrained to be an object
- * and cannot be things like `true` or `null`
- *
- * @param {string} input JSON input string to parse
- * @return {Object|null} parsed JSON if valid
- */
-
-
-function parseJSON(input) {
-  try {
-    return JSON.parse(input);
-  } catch (e) {
-    return null;
-  }
-}
-
-function nextToken() {
-  // aye the magic
-  // we're using a single RegExp to tokenize the block comment delimiters
-  // we're also using a trick here because the only difference between a
-  // block opener and a block closer is the leading `/` before `wp:` (and
-  // a closer has no attributes). we can trap them both and process the
-  // match back in Javascript to see which one it was.
-  var matches = tokenizer.exec(document); // we have no more tokens
-
-  if (null === matches) {
-    return ['no-more-tokens'];
-  }
-
-  var startedAt = matches.index;
-
-  var _matches = Object(_babel_runtime_helpers_esm_slicedToArray__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"])(matches, 7),
-      match = _matches[0],
-      closerMatch = _matches[1],
-      namespaceMatch = _matches[2],
-      nameMatch = _matches[3],
-      attrsMatch = _matches[4],
-
-  /* internal/unused */
-  voidMatch = _matches[6];
-
-  var length = match.length;
-  var isCloser = !!closerMatch;
-  var isVoid = !!voidMatch;
-  var namespace = namespaceMatch || 'core/';
-  var name = namespace + nameMatch;
-  var hasAttrs = !!attrsMatch;
-  var attrs = hasAttrs ? parseJSON(attrsMatch) : {}; // This state isn't allowed
-  // This is an error
-
-  if (isCloser && (isVoid || hasAttrs)) {// we can ignore them since they don't hurt anything
-    // we may warn against this at some point or reject it
-  }
-
-  if (isVoid) {
-    return ['void-block', name, attrs, startedAt, length];
-  }
-
-  if (isCloser) {
-    return ['block-closer', name, null, startedAt, length];
-  }
-
-  return ['block-opener', name, attrs, startedAt, length];
-}
-
-function addFreeform(rawLength) {
-  var length = rawLength ? rawLength : document.length - offset;
-
-  if (0 === length) {
-    return;
-  }
-
-  output.push(Freeform(document.substr(offset, length)));
-}
-
-function addInnerBlock(block, tokenStart, tokenLength, lastOffset) {
-  var parent = stack[stack.length - 1];
-  parent.block.innerBlocks.push(block);
-  var html = document.substr(parent.prevOffset, tokenStart - parent.prevOffset);
-
-  if (html) {
-    parent.block.innerHTML += html;
-    parent.block.innerContent.push(html);
-  }
-
-  parent.block.innerContent.push(null);
-  parent.prevOffset = lastOffset ? lastOffset : tokenStart + tokenLength;
-}
-
-function addBlockFromStack(endOffset) {
-  var _stack$pop = stack.pop(),
-      block = _stack$pop.block,
-      leadingHtmlStart = _stack$pop.leadingHtmlStart,
-      prevOffset = _stack$pop.prevOffset,
-      tokenStart = _stack$pop.tokenStart;
-
-  var html = endOffset ? document.substr(prevOffset, endOffset - prevOffset) : document.substr(prevOffset);
-
-  if (html) {
-    block.innerHTML += html;
-    block.innerContent.push(html);
-  }
-
-  if (null !== leadingHtmlStart) {
-    output.push(Freeform(document.substr(leadingHtmlStart, tokenStart - leadingHtmlStart)));
-  }
-
-  output.push(block);
-}
-
-
-/***/ }),
-
-/***/ 28:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayWithHoles.js
-var arrayWithHoles = __webpack_require__(37);
-
-// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/iterableToArrayLimit.js
-function _iterableToArrayLimit(arr, i) {
-  var _arr = [];
-  var _n = true;
-  var _d = false;
-  var _e = undefined;
-
-  try {
-    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-      _arr.push(_s.value);
-
-      if (i && _arr.length === i) break;
-    }
-  } catch (err) {
-    _d = true;
-    _e = err;
-  } finally {
-    try {
-      if (!_n && _i["return"] != null) _i["return"]();
-    } finally {
-      if (_d) throw _e;
-    }
-  }
-
-  return _arr;
-}
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/nonIterableRest.js
-var nonIterableRest = __webpack_require__(38);
-
-// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _slicedToArray; });
-
-
-
-function _slicedToArray(arr, i) {
-  return Object(arrayWithHoles["a" /* default */])(arr) || _iterableToArrayLimit(arr, i) || Object(nonIterableRest["a" /* default */])();
-}
-
-/***/ }),
-
-/***/ 37:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _arrayWithHoles; });
-function _arrayWithHoles(arr) {
-  if (Array.isArray(arr)) return arr;
-}
-
-/***/ }),
-
-/***/ 38:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _nonIterableRest; });
-function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
-}
-
-/***/ })
-
-/******/ });
+      addInnerBlocLrĞĞ!¹D—*M‰RB‘jIèEEE@Z 4•bÁ?}l¨ˆeç}Ï™sO.`¾ïo¿<OæıÕ9sæÌï”¹Sc·†oc7†k*k»-ü$bÌ·šÂ	´ ˜Ãó­«ÒäƒXÿ”É·]`]ûL~âëÒŸ5ùı¬+Éä=­ÿ¥Éw^h]÷ÿ1ùE­Ë~™¼}Õ­%Ac[åZ±ÿ[ÿ?ıšeb¿ÂÿÇşmb{¶û}û#ö{ğÇş…l;ö©¬’cÇ¾)h”cÇ¾)è™cÇ¾)˜cÇ¾)Ø”cÇ¾)8ŸcÇ¾)¨”kÇ>şE–,Èş?Ä~MgìW¸9öÇêØŸ4i,×ÒtDÿXı¿ÿ~ÇŸ(şs_ÕñvSòª“Z¬ãßä[,Öñoò¾Å:şM~Íbÿ&q±“¯­ãßä{gëø'¸$pìõ¥:şÿqü×ú_Ç¿øSÇÆüFüË!şøÏYâ(kîYâ
+./ñÇ?QKıñOÁcKıñOAúRüS½ÔÿZêê]µã¿Ó’?áŒÿZ·ÿ*ˆÿñfüî€bÆ~•­ZnÆ~ÄŸ(ö“ruì£Å¼«cßä_ÏÕ±oò_åêØ7ù:y:öM>5OÇ¾É/ÊÓ±oòÇòtì›|¥%:öÉÛWİŠı¸¿.ÃWÎ“åà°üÄ¹ "R•ToÊ<ë«RR›¨¾£úkõ@ı}¤ïöTÓêÚë~Øê-Z}A{c^¸­>«Õ™Úûğ,‡úšVÏÕjŒ¯ÔêJw-Ç(¶™ï›})u…ãf—0’~˜N8
+kÓ%=’?*±¹5”mOPtÈAË·¤<_¿¦íÏ—gÏñÿÑÇ´ıçåÙsätóC–ı•òì9æ?:OÛŸ.Ï¢ƒ[öß–gÏÙÑiÚşzyöœ2]¢íEp9öœGİôˆeGyöœ\£í+•gÏ"r‘j"®ê;‚jSD¦ú¯nÎë[ˆµL'æOŠìf ÁšJ…l^?·›×Àá8äëu]¢"H3	l^;Zû›WßR»y•ãk6¯}¥vó*ÇŞl^OØÍ«{³ye°›W9öfóº~Ân^åØ›Í+õ¤İ¼Ê±7›×{'íæU½Ù¼¼§ìæU½Ù¼æ²›W9öfóúñ”İ¼Ê±·šW…Öj¡Ü¡‹ú;s£áè]â+Ó1Ú<«LÇ(ØŠ+°|Ôyß-:F©‡ú_}·èµıM£è~ëíÑßÒq<^TË‘şÑ£ëíÑ¿ùØL“>#ı£­6Ø£q>.Î®;F‹7Ø£C¹¬éï­ºÑÑ1Ê‚¶Ïb7²ËŠ7±~”^‡Úêä©‘`÷(¬ªvõ³³—Ç–e÷ˆ>n±Qi"
+¶¬ºD©7´şWê‘+«.Écf÷„Óß4Š.-¶êe¡Õe/*"Ëªºîè}k,“E>4©A“¨,«ê’=Ñ­µêe±g¢#—úYVÕõğDïÖ&Ù\eYU—â©ÑzUu¹º Mn]uìUÍmÅJtyvqßİfNßí
++`Ï'Åú zÂQ6®°bÜ÷j>-¬ç-PéæÚªÄÏÂ®‡;z²öIuwğûô ¶(„®»;j‡¿Zº£÷)üè~Öq
+øyäk8Ö¨¬
+ø¨ú¯:À*[EØÑBD·WŠáPr¿=OQÔÈP¢lˆó>şYQXĞ [VMt‹X«à™ ¾âDaØ5:/2ÅPM­ıÖJ«˜KB±aÅƒÈŠ¨ìÑVm¼ÊöòT¾¢'…FmãÅĞÚ»ó-÷åî1”í¥ŸZ¿Ò*ë„W…švôà±jËUÖù–†Òû$N·ö%ı^ıW=ÚÈ–FW[m³Š9´âsc¸‚™¶ª~k«Ã´Z\¨Ê§ş«¶t·¤œ­ã¸‹,]+KwØ¯Zd•,Öİ(ĞïßZ÷OKç÷c+—»åo+­.ù›Æ€Eå:»ägq¬XLˆíÊ‡òä|{¬Ø)=V¬IˆºÀ:4„³\C
+G´Æ¡µcY{”õqZ¿\»³"ÇeÊ
+®Â–Ì+Ó‚;N/°¦Î"S¶¥/aÿR°ˆË,ÖxŒ5<çÆáioM³‡§ELUÚÓêêTû9nûj¸^î„qÎø–¨ö•ëá­6±«öõ:evE‰@ŞØÚ²ÚÕzX/Ï<ŞVd "Î(ËWÔ¥ªv#ÎW˜¥x¸]¡ÎRd¨,¿,7Ku}ÖX¿¨àÃ aÿ¢Òn“õ.UkSÙw©Î¸7%ëDğãƒ7¨«ú]*rĞ&ëA™š8
+/ú/juèlK}Õù‘Q¬Õ³‡XB¼ÙR§eÂººV§gşÌu3­ø;’RÇ»ş‰L¼«=>›ã]²×:í%ÄLè|Ğ%r> «—KHìCHEèş2ARŞ&ô:Iè}™ĞG, <ùWBZCÂ°v„§ O'N$]™(6‹»ö%
+×åÖo"lØCØXJØt‘°ù{Â–°…€­u	¯5'¼Ş“°-°}aÇ"ÂE„7÷v'¼ı=a×}‹ »Ûöô$¼;š°÷%Â{kûöö@8ğáı
+¯Ö$Š!y”PÒ…p¬?áøhBéTÂ‰ÂÉ7	§ÎNÿ@8Sy1àƒ	¶#|”H8Û‡pnáüBóY„6¹„ë‰oz–R?!ù†àÊ<ûÂÄû3šf·',êIX:”ĞKíÄ»Ú>G.v*¡ãlBÒ2B¯M„¾ï† Œüœ0öa’;0óÂœú„W[–Å
+ÂÆ§	Û§vgä½Axöa¬ÙˆëŸ	g–óy³ıë4MÆ»rª&¶$LJ%LHxaaêZÂ´ı„éŸfşDx1,ğRuÂ¬F„Ì„—Ÿ$¼2†0û%ÂœÂÜU„y;	YGó//a]W%,~€OÈDX:‰°<‡°baåaBşg„‚_	«ş²°º¡0ğ^*a_aÿtÂ\ÂûÛK	‡®{–±	×!íN(@86†p|6¡táÄ‡„“×	§ê,4Æñ®Ì‹óPW
+÷"dgr°gQ¼+w¹%Ë	K·–!,¿HXy²‚gAXUPX—PC(~”°¦=a]7Âú>„CG6'l™IØšExm	a[aûVÂ»oTĞ¹vÃà.‹ßâÅ-Í3|ä
+¹GÍVØ
+ïvñ®„Z×&´iAh›@ˆM%´Gxl!.—ĞP²Áõ3³î¿“Âû	ƒJ	CÎ†~KHÎç½6Š0¢.!½-Á×›0r$aÔ,Â˜U„göÆ#<w…0îÂów0„jÆÇ&´'LìJ˜40ùiÂ”	„f¦.#Lûˆ0ıÂŒŠ«Iµ³š2;^éG˜ó,aîË„y…„¬·	ó?TĞ5ó!Ö«ÿ 8Î°JØ­è+ê?$ËÕ^	o˜&Š‰¤»ßR.êÿµõ· ù‚zÑ¨¤ønØ@üµ\/áS%˜ù¶zŠ^
+¿3VèVÄó5q“)Ecâk~ºûĞ—Ã¹)NÂ[Šyd—Ã]ÿœ¡İÑ©İAkwÎSLˆS®{œîWÜñ¦¡İAkw.I8©\İwt[:İ/8~ÁqtØ‰„åZiÃ]Ï±Ÿå(|–ßv"¡·rıÀé®‡k÷4‡{šÃı~ÖüçÊµÿ;÷¹îé÷t‡û\ºû”ëœîyî£î£î°Ißbğ»h;÷À»cë[4£Ê c¯ãu^){ŒÆ1ÃÑ8¸ªtÂçÊµÿ{÷Ã³Êºg:Ü3î°	Ç”kÂ>‡ûùÙeİç:Üç:Üa'êíb´ú¿gŒ9öæÉ¥‰¦«ö$ÖAZ$QLµJşÇ¾é_Ÿé›ô£òë÷>*qÅ%¸–¤İ¢f#
+ÑVıWw…¡gÓ7õ¾}J÷Që –šĞtšé;‘0R1³!¨é^ÁánÒ"a‹2ÿì(†ï™3/¹Rûš£Vµ*iÛ»]fµZ´HØY"D…cª¼i"±®J,Ë «’K4$<©üÖsTåm|Ó¾>Ó7iğq!G­­­ëR®‡ß\•I‡OÑìøÚŒ2ÚŞÂ(æ¬ÙgÁ?:F»ÅEùàušŸªªŠÃ'’ÿnT¯u†ó¢˜j³V-š%>v"¡«Êc8òééŞİánÒ¢Gƒ¯Õw¢ú¯ÖÚ]ºÙ%ì_yÙ¤[»Á‹Û•Åw¦ÕXé{´×,êñ»²øç`5# ¯Ìk®²8mZ}
+«y]`^ß*‹ÆßRğ¬2òÊd^­”ÅXÓê
+¬æXÍ¥UËï„Xòs¶(+İ«­8¼G»kBL¹FA«­ÊJŠj«TÖ×—×0WX	:¸GÀê\™¼:¸¿e^s”E©i5
+VŸXağ£è±úG!şı#7`uÿô²VÃh5ÿ'•×OL}Í%üwkËêZÍ¼.ÄşëÜùºKøoÊ–Uk¢úÏBôü™§“¾]Yéïi}ü Çpeñ®i5Vjb k"ò†]nP0ViVi´z\Y,0­ÆÃ*=À*V+•Å'¦ÕX°/Dö&h¡N¸Â!î,ävÕÀ“qLi§în—|t§œR‚Ğù‘ô¼ˆ8¢îRÉİ•RW%w„$c“ƒd,”kîøŠmz\vBF©*ìÍ}İÍ}¾9Ø<B‚äOÛ{áĞ:¥ö–uIÌ§Lî¬’>Ø¨\&ƒ%™eÀÓ€Â ¨Ëñğ Õ I&XR1Ÿ24’çñ§r5rd	$cWV9	Ş+Œ÷ %U
+³Ş%dò\e%£¢â]*Çp,˜"±¯©q–¤DTRß=±[acÖGWEVğJxu”*”lŠy¢€Jf dOpƒJUí®äAÊ¤¡[]­û£…€UĞ¶Ğ`ì!ûääÕBÌPo‹3‹„Hí¥˜u¿(íj­ï³…Bl[„×ğ~Uş®ã¿ë?×NhÖmßá}U†»À®…aß{U^a`7ƒ°äÄIè)B`¥*ìø´Á½Wù‚M«qIŸsT—aî3J‘‹nŠ(„EÃ.¿E—0÷e¥h£dîŠè¬õ7ÏDŒ:pÇŞÉ7¥Pt‰~¬ˆ»àıº»±bG©ÿÁ®ç‹àÄÂB•A¿Ë½{µ£LZ2]^í(Š­PE‰ò—ÀYùŸÍ¢£®|\ “¡Ø#V<9¬ÈQù±EVåïeå÷-¶*+?æ••ÿE±Uùï³òCÖX•_ÂÊ/y,ï¦Ê?ì^WlUşß‹oSù»‹­Ê¤ø6•¢Øªü®Å·«üón®üî{ÖüQåŸsİ¦òOİ¦ò-òWş$õ°ÊDò>UñCc¢Í¥Æ‚»Ìm[±ZP	_|º_D1KI‹¸k¨ˆ
+æ­¥0]½~†?%¼Ö0—Öâ}XÓ#<ŞæŠÆ°Íğôpoœ¦}•¼ñŠzd¤·Ÿ¶ºŠwXóú‡©î¥è°É¨å}NÑ›A?sŸw¢¢ƒ~¶¾w¹¢ÃÕKYøØ†ŞBçó1Şuºlã[x7éü'´ò¾¦èz°ŸÜÖ»WÑ-AOyÌ{PûN‹óÕö3»xÏ(İá/&	9Z)uj`Å—”Ö
+Bƒâzƒ÷&èãu^©ı»„¨ûŸ¦ñM§%ä¶2|E¾æó6-ñL§¡ÆMõ[ñƒ"³q¶±.UèùŠ¬ôXnTÓygUY9³LÎÜ>›®ÃPî§šdbËÜáo¢ÀwøE.1Â‘ê½¤Äx:DôŞol:DÄõ¨©n‹‘¼7¬“Šl,¼A5-úoMÇx¼•5ı`¸·ª¦›Dzkiú¡(o}M?\Å£é¦Õ½-4İ¬–7¶¦ylqŸ·³¢q*‘-ë‹ôÈtÏOåoŠeP9WxMç…ˆ‘•WP‰¥”*¯4•¤ó="%U1¡‰%{Ì‹fIl¦gRİ•a2({[ıÀ‚’ $)lİ$ÇAÊ û"Xäb ø½Ác¬V²´<{T¹<ös57u5°¸<!ŸØHDÊ+ªÇ]PÊ¥&
+<)MÂ¾É)£ ”ù»r)C_ÁÜˆj*‹PÌ‰ÖG–Ûå0ÁzLû+¤¬oÅ4áÊÀªçæ¾$ƒ’ $(>W}m„¸Û+Ÿyğ3àçCæ0_ÉÒ^²·Å‘ùà7Ø»üXUî@ØPE¾Š2$XY,®äCb ‘WÍ§öZånCî$f­h«ÖÙ2p©¬e`ßK_XÔJ6Ro‰ÉÌë-K&#š)¶=¤H°rxs•¤B‘U‰±	ÉhÈ°¼­dVbÉ\ƒ&ğXuĞ‡Ä@"”,-Ç^ûU¾†¨Æj”’É™à%
+RH$X‰¯?yºµJ¾‚ãp$ã^u-1lƒ"+±ª AxÈŞhËõaG
+‰++´C¦±JÖ Œ%“`Gª.o*XRH$X™§,œf¼…”œ;R(âCb ‘»<Š*€ımr¨0¼‚5ÀJh%–~’G %…w>ó_È/æàÖ¼ubcH•üsPÒ­Ş¬“©˜Åİ`IA&±(’l (ƒì¯ê(Oÿ8^±í Àw>(&<r_hÁJ,À`è®’1’@QDb92PÙë]U¦H$r#´¤0%Úø[O•ì…”<
+Š
+$sâåg2ÈnSÇõ!1H¡>’Ia’¢ñ±6(YH$f©Ê&2Èf¨ãúHd´ ’±N§|H%É´d~€`Fò[ê~’üŒÇNÆÀL}›ú°<Êô'Éd…N£[%~½–X´‘h;W|9:ø•İ17UX‚•Aá—fy~ Vê²\Å°q.û¹&1 Éx0C%U1_”¬Š
+E0ÀÊ‘é*‰…”A6	,:%ŒŞ xSAã0ğ½làC×À;²wµQİ6cËu>g™ülï¿8ªT÷ßRÕªf|ä3ÁsMŒi§²RËÁUó@‡g mK

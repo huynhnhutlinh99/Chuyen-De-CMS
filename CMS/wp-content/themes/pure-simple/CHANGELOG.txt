@@ -1,0 +1,225 @@
+-------------------------------------------------------
+    CHANGELOG
+-------------------------------------------------------
+
+Keep a change log to describe all the changes made to program source files. The purpose of this is so that people investigating 
+bugs in the future will know about the changes that might have introduced the bug. Often a new bug can be found by looking at 
+what was recently changed. More importantly, change logs can help you eliminate conceptual inconsistencies between different 
+parts of a program, by giving you a history of how the conflicting concepts arose and who they came from.
+
+
+-------------------------------------------------------
+    CHANGELOG Legend
+-------------------------------------------------------
+
+[+] = Added
+[*] = Changed
+[^] = Moved
+[=] = No Changes
+[x] = Deleted
+[!] = Bugs
+
+
+=======================================================
+
+[October 18, 2014] Version 1.0.0 Styled Themes <www.styledthemes.com>
+
+[] Pure & Simple released
+
+=======================================================
+
+
+[October 18, 2014] Version 1.0.1 Styled Themes <www.styledthemes.com>
+
+[*] Corrected the text domain for some language strings
+[x] Removed the premade child theme. Now available as a download.
+[*] Updated the puresimple.pot language file
+[*] Updated the README.txt file
+
+=======================================================
+
+
+[December 15, 2014] version 1.0.2 Styled Themes <www.styledthemes.com>
+[x] Removed import from editor-style.css.
+[^] Moved Font is now enqueued from separate css file.
+
+=======================================================
+
+[December 18, 2014] version 1.0.3 Styled Themes <www.styledthemes.com>
+[!] = Fixed the bug of Primary Menu in mobile view.
+[+] = Added the changelog.txt file.
+
+=======================================================
+
+[December 23, 2014]version 1.0.4 Styled Themes <www.styledthemes.com>
+[!] = Fixed the bug of Primary Menu in mobile view.
+
+
+=======================================================
+
+[January 5, 2015]version 1.0.5 Styled Themes <www.styledthemes.com>
+[!] = Post format title bug fixed.
+
+
+=======================================================
+
+[February 25 2014] version 1.0.6 Styled Themes <www.styledthemes.com>
+[!] Logo Responsive Bug Fixed
+[+] Added CSS for Tables
+[!] Background Header Bug Fixed
+
+=======================================================
+
+[February 25 2014] version 1.0.7 Styled Themes <www.styledthemes.com>
+[x] Deleted Unnecessary Zip file
+
+=======================================================
+
+[March 18 2014] version 1.0.8 Styled Themes <www.styledthemes.com>
+[!] Fixed the Bug of IE Compatibility
+[!] Translation Bug Fixed 
+[+] Dutch Translation Added
+
+----
+(April 20, 2015) - Adjustments - Version 1.0.9
+[!] WooCommerce Support Added
+
+
+(June 23, 2015) - Adjustments - Version 1.0.9
+[+] Documentation Link Added
+[!] Fixed the Bug of Menu Link
+[!] Font Awesome Icon Updated
+
+[September 18, 2015] Version 1.1.1 Styled Themes <www.styledthemes.com>
+
+[!] Wordpress 4.3 Compatiblity bug fixed
+[!] Menu height bug fixed for responsive.
+[+] Default Content for bottom widget of footer
+[+] Drop down menu toogle features added
+[!] Logo size bug fixed
+[!] Feature post image width in mozila firefox bug fixed
+[+] Adding default image for banner Section
+[+] Adding Default Content for Cta widget
+
+------
+[September 22, 2015] Version 1.1.2 Styled Themes <www.styledthemes.com>
+
+[!] Drop Down menu bug fixed
+[!] Default Menu Bug Fixed
+[+] Adding Hide Option for Default content via Customizer
+
+---
+[September 24, 2015] Version 1.1.2 Styled Themes <www.styledthemes.com>
+
+[!] Hide Option for Default content bug fixed
+
+---
+
+---
+[November 3, 2015] Version 1.1.4 Styled Themes <www.styledthemes.com>
+
+[!] Logo Bug Fixed
+
+---
+
+---
+[November 28, 2015] Version 1.2.1 Styled Themes <www.styledthemes.com>
+
+[!] Double title bug fixed
+[!] Bug in the menu fixed
+[*] Updated the screenshot and default demo image
+
+---
+
+[January 6, 2016] Version 1.2.2 Styled Themes <www.styledthemes.com>
+
+[!] Sub-menu bug Fixed
+
+---
+
+[March 4, 2016] Version 1.2.3 Styled Themes <www.styledthemes.com>
+
+[!] Theme preview  on customizer bug Fixed.
+
+---
+
+[March 9, 2016] Version 1.2.4 Styled Themes <www.styledthemes.com>
+
+[!] Blog customizer setting bug fixed
+
+---
+
+[April 14, 2016] Version 1.2.5 Styled Themes <www.styledthemes.com>
+
+[!] widgets customizer bug Fixed
+
+---
+
+[May 03, 2016] Version 2.0.0 Styled Themes <www.styledthemes.com>
+
+[+] Move to top featured Added
+
+---
+
+[May 30, 2016] Version 2.1.0 Styled Themes <www.styledthemes.com>
+
+[+] Customizer setting to change mobile menu navigation colors Added
+
+---
+
+[July 7, 2016] Version 3.0.0 Styled Themes <www.styledthemes.com>
+
+[+] Custom Content widgets Added
+[x] Deprecated tags Removed
+
+---
+
+[October 06, 2016] Version 3.0.1 Styled Themes <www.styledthemes.com>
+
+[+] Customizer setting to change page title  color on hover Added
+[*] Santize functin for color and url Changed
+
+---
+
+[November 22, 2016] Version 3.0.2 Styled Themes <www.styledthemes.com>
+
+[!] Mobile sub-menu on click bug Fixed
+
+---
+
+[February 15, 2016] Version 3.0.3 Styled Themes <www.styledthemes.com>
+
+[+] Customizer.js file added to make blog name and description 
+[x] Adding of upsells link through js Deleted.
+[+] Standard way of adding upsells link Added
+
+---
+
+[August 22, 2017] Version 3.0.4 Styled Themes <www.styledthemes.com>
+
+[!] Customizer option for button background color on hover Fixed
+[x] Customizer label for button Changed
+
+---
+
+[August 23, 2017] Version 3.0.5 Styled Themes <www.styledthemes.com>
+
+[+] Customizer option to add Sub Menu background Added 
+
+---
+
+[August 24, 2018] Version 3.1.0 Styled Themes <www.styledthemes.com>
+
+[*] Updated theme product page links and update msg
+[!] Fixed W3C validation errors in header meta
+[!] Fixed demo home img missing alt tag
+[*] Minor tweak to blog post list styling
+[+] Added link to blog post thumbnail for better usability
+[*] Changed the way "Basic Settings / Hide default content from theme option" works, now banner and cta shows default content for only Homepage if enabled
+[!] Fixed See More... link position on gallery
+
+---
+
+[December 13, 2018] Version 3.2.0 Styled Themes <www.styledthemes.com>
+
+[*] Added theme support for gutenberg compatibility

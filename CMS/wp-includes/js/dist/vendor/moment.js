@@ -4292,215 +4292,7 @@
         return substituteTimeAgo.apply(null, a);
     }
 
-    // This function allows you to set the rounding function for relative time strings
-    function getSetRelativeTimeRounding (roundingFunction) {
-        if (roundingFunction === undefined) {
-            return round;
-        }
-        if (typeof(roundingFunction) === 'function') {
-            round = roundingFunction;
-            return true;
-        }
-        return false;
-    }
-
-    // This function allows you to set a threshold for relative time strings
-    function getSetRelativeTimeThreshold (threshold, limit) {
-        if (thresholds[threshold] === undefined) {
-            return false;
-        }
-        if (limit === undefined) {
-            return thresholds[threshold];
-        }
-        thresholds[threshold] = limit;
-        if (threshold === 's') {
-            thresholds.ss = limit - 1;
-        }
-        return true;
-    }
-
-    function humanize (withSuffix) {
-        if (!this.isValid()) {
-            return this.localeData().invalidDate();
-        }
-
-        var locale = this.localeData();
-        var output = relativeTime$1(this, !withSuffix, locale);
-
-        if (withSuffix) {
-            output = locale.pastFuture(+this, output);
-        }
-
-        return locale.postformat(output);
-    }
-
-    var abs$1 = Math.abs;
-
-    function sign(x) {
-        return ((x > 0) - (x < 0)) || +x;
-    }
-
-    function toISOString$1() {
-        // for ISO strings we do not use the normal bubbling rules:
-        //  * milliseconds bubble up until they become hours
-        //  * days do not bubble at all
-        //  * months bubble up until they become years
-        // This is because there is no context-free conversion between hours and days
-        // (think of clock changes)
-        // and also not between days and months (28-31 days per month)
-        if (!this.isValid()) {
-            return this.localeData().invalidDate();
-        }
-
-        var seconds = abs$1(this._milliseconds) / 1000;
-        var days         = abs$1(this._days);
-        var months       = abs$1(this._months);
-        var minutes, hours, years;
-
-        // 3600 seconds -> 60 minutes -> 1 hour
-        minutes           = absFloor(seconds / 60);
-        hours             = absFloor(minutes / 60);
-        seconds %= 60;
-        minutes %= 60;
-
-        // 12 months -> 1 year
-        years  = absFloor(months / 12);
-        months %= 12;
-
-
-        // inspired by https://github.com/dordille/moment-isoduration/blob/master/moment.isoduration.js
-        var Y = years;
-        var M = months;
-        var D = days;
-        var h = hours;
-        var m = minutes;
-        var s = seconds ? seconds.toFixed(3).replace(/\.?0+$/, '') : '';
-        var total = this.asSeconds();
-
-        if (!total) {
-            // this is the same as C#'s (Noda) and python (isodate)...
-            // but not other JS (goog.date)
-            return 'P0D';
-        }
-
-        var totalSign = total < 0 ? '-' : '';
-        var ymSign = sign(this._months) !== sign(total) ? '-' : '';
-        var daysSign = sign(this._days) !== sign(total) ? '-' : '';
-        var hmsSign = sign(this._milliseconds) !== sign(total) ? '-' : '';
-
-        return totalSign + 'P' +
-            (Y ? ymSign + Y + 'Y' : '') +
-            (M ? ymSign + M + 'M' : '') +
-            (D ? daysSign + D + 'D' : '') +
-            ((h || m || s) ? 'T' : '') +
-            (h ? hmsSign + h + 'H' : '') +
-            (m ? hmsSign + m + 'M' : '') +
-            (s ? hmsSign + s + 'S' : '');
-    }
-
-    var proto$2 = Duration.prototype;
-
-    proto$2.isValid        = isValid$1;
-    proto$2.abs            = abs;
-    proto$2.add            = add$1;
-    proto$2.subtract       = subtract$1;
-    proto$2.as             = as;
-    proto$2.asMilliseconds = asMilliseconds;
-    proto$2.asSeconds      = asSeconds;
-    proto$2.asMinutes      = asMinutes;
-    proto$2.asHours        = asHours;
-    proto$2.asDays         = asDays;
-    proto$2.asWeeks        = asWeeks;
-    proto$2.asMonths       = asMonths;
-    proto$2.asYears        = asYears;
-    proto$2.valueOf        = valueOf$1;
-    proto$2._bubble        = bubble;
-    proto$2.clone          = clone$1;
-    proto$2.get            = get$2;
-    proto$2.milliseconds   = milliseconds;
-    proto$2.seconds        = seconds;
-    proto$2.minutes        = minutes;
-    proto$2.hours          = hours;
-    proto$2.days           = days;
-    proto$2.weeks          = weeks;
-    proto$2.months         = months;
-    proto$2.years          = years;
-    proto$2.humanize       = humanize;
-    proto$2.toISOString    = toISOString$1;
-    proto$2.toString       = toISOString$1;
-    proto$2.toJSON         = toISOString$1;
-    proto$2.locale         = locale;
-    proto$2.localeData     = localeData;
-
-    proto$2.toIsoString = deprecate('toIsoString() is deprecated. Please use toISOString() instead (notice the capitals)', toISOString$1);
-    proto$2.lang = lang;
-
-    // Side effect imports
-
-    // FORMATTING
-
-    addFormatToken('X', 0, 0, 'unix');
-    addFormatToken('x', 0, 0, 'valueOf');
-
-    // PARSING
-
-    addRegexToken('x', matchSigned);
-    addRegexToken('X', matchTimestamp);
-    addParseToken('X', function (input, array, config) {
-        config._d = new Date(parseFloat(input, 10) * 1000);
-    });
-    addParseToken('x', function (input, array, config) {
-        config._d = new Date(toInt(input));
-    });
-
-    // Side effect imports
-
-
-    hooks.version = '2.22.2';
-
-    setHookCallback(createLocal);
-
-    hooks.fn                    = proto;
-    hooks.min                   = min;
-    hooks.max                   = max;
-    hooks.now                   = now;
-    hooks.utc                   = createUTC;
-    hooks.unix                  = createUnix;
-    hooks.months                = listMonths;
-    hooks.isDate                = isDate;
-    hooks.locale                = getSetGlobalLocale;
-    hooks.invalid               = createInvalid;
-    hooks.duration              = createDuration;
-    hooks.isMoment              = isMoment;
-    hooks.weekdays              = listWeekdays;
-    hooks.parseZone             = createInZone;
-    hooks.localeData            = getLocale;
-    hooks.isDuration            = isDuration;
-    hooks.monthsShort           = listMonthsShort;
-    hooks.weekdaysMin           = listWeekdaysMin;
-    hooks.defineLocale          = defineLocale;
-    hooks.updateLocale          = updateLocale;
-    hooks.locales               = listLocales;
-    hooks.weekdaysShort         = listWeekdaysShort;
-    hooks.normalizeUnits        = normalizeUnits;
-    hooks.relativeTimeRounding  = getSetRelativeTimeRounding;
-    hooks.relativeTimeThreshold = getSetRelativeTimeThreshold;
-    hooks.calendarFormat        = getCalendarFormat;
-    hooks.prototype             = proto;
-
-    // currently HTML5 input type only supports 24-hour formats
-    hooks.HTML5_FMT = {
-        DATETIME_LOCAL: 'YYYY-MM-DDTHH:mm',             // <input type="datetime-local" />
-        DATETIME_LOCAL_SECONDS: 'YYYY-MM-DDTHH:mm:ss',  // <input type="datetime-local" step="1" />
-        DATETIME_LOCAL_MS: 'YYYY-MM-DDTHH:mm:ss.SSS',   // <input type="datetime-local" step="0.001" />
-        DATE: 'YYYY-MM-DD',                             // <input type="date" />
-        TIME: 'HH:mm',                                  // <input type="time" />
-        TIME_SECONDS: 'HH:mm:ss',                       // <input type="time" step="1" />
-        TIME_MS: 'HH:mm:ss.SSS',                        // <input type="time" step="0.001" />
-        WEEK: 'YYYY-[W]WW',                             // <input type="week" />
-        MONTH: 'YYYY-MM'                                // <input type="month" />
-    };
-
-    return hooks;
-
-})));
+    // This function a-x86/usr/include/asm/apic.hUT üûVux [I  ˆ  PK   n‚~HZ†o‚  ç  H         ¤×¹zandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/pgalloc.hUT üûVux [I  ˆ  PK   n‚~H±¾‹;a  ˜
+  J         ¤Û»zandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/percpu_32.hUT üûVux [I  ˆ  PK   n‚~HD“_  Y  K         ¤À¿zandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/sigcontext.hUT üûVux [I  ˆ  PK   n‚~HRĞ“S‹  I  J         ¤¤Ãzandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/desc_defs.hUT üûVux [I  ˆ  PK   n‚~HÅÌËw§    K         ¤³Çzandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/hardirq_32.hUT üûVux [I  ˆ  PK   n‚~HyŞ'÷    E         ¤ßÊzandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/acpi.hUT üûVux [I  ˆ  PK   n‚~Hh/D"  Ã  H         ¤UÍzandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/siginfo.hUT üûVux [I  ˆ  PK   n‚~Hòàe2S  	  H         ¤ùÏzandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/i387_32.hUT üûVux [I  ˆ  PK   n‚~HY¬0$—    O         ¤ÎÓzandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/thread_info_32.hUT üûVux [I  ˆ  PK   n‚~HÍRw    D         ¤îÕzandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/ist.hUT üûVux [I  ˆ  PK   n‚~HàƒŠ  t  G         ¤ƒØzandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/shmbuf.hUT üûVux [I  ˆ  PK   n‚~Hì²¯l  Ó  H         ¤Ûzandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/termios.hUT üûVux [I  ˆ  PK   n‚~HYÎù0ë  l  D         ¤|ßzandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/bug.hUT üûVux [I  ˆ  PK
+     n‚~H            C         íAåázandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/xen/UT üûVux [I  ˆ  PK   n‚~Hm7æg*  ¦  N         ¤bâzandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/xen/hypercall.hUT üûVux [I  ˆ  PK   n‚~HÂÒ†ş  æ  G         ¤æzandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/mpspec.hUT üûVux [I  ˆ  PK   n‚~H\((    K         ¤èzandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/genapic_32.hUT üûVux [I  ˆ  PK   n‚~H	Å¡ó”  @  R         ¤Ãízandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/required-features.hUT üûVux [I  ˆ  PK   n‚~Hµ^÷üƒ  é  J         ¤ãğzandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/processor.hUT üûVux [I  ˆ  PK   n‚~H;6g(  ı  F         ¤êòzandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/cache.hUT üûVux [I  ˆ  PK   n‚~H*0Lo  O  H         ¤’õzandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/page_32.hUT üûVux [I  ˆ  PK   n‚~Hlğs_ë  t  I         ¤)øzandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/shmparam.hUT üûVux [I  ˆ  PK   n‚~HÉ«“d#  ,	  J         ¤—úzandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/byteorder.hUT üûVux [I  ˆ  PK   n‚~Hcülˆq  *  F         ¤>şzandroid-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/io_32.hUT üûVux [I  ˆ  PK   n‚~H‰šƒ  è  I         ¤/{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/irqflags.hUT üûVux [I  ˆ  PK   n‚~HF3›~„  í  E         ¤5{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/poll.hUT üûVux [I  ˆ  PK   n‚~HÜÎLV    G         ¤8{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/smp_32.hUT üûVux [I  ˆ  PK   n‚~HÏŞÜ  .  H         ¤	{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/desc_32.hUT üûVux [I  ˆ  PK   n‚~HEØú[    I         ¤m{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/vsyscall.hUT üûVux [I  ˆ  PK   n‚~H³Ğp×    G         ¤K{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/dma_32.hUT üûVux [I  ˆ  PK   n‚~HÿTÒŠL  h  G         ¤£{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/ioctls.hUT üûVux [I  ˆ  PK   n‚~H‹r¶V…  ñ  I         ¤p{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/sections.hUT üûVux [I  ˆ  PK   n‚~H¢Do_o  Ê  O         ¤x{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/alternative_32.hUT üûVux [I  ˆ  PK   n‚~HG;9   ½  F         ¤p {android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/prctl.hUT üûVux [I  ˆ  PK   n‚~HË0Ğ   m  E         ¤ğ"{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/stat.hUT üûVux [I  ˆ  PK   n‚~HÁ:g  ã  D         ¤o&{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/dma.hUT üûVux [I  ˆ  PK   n‚~Hæxñ  †  G         ¤l({android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/auxvec.hUT üûVux [I  ˆ  PK   n‚~Hú$€  ã  D         ¤Ş*{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/irq.hUT üûVux [I  ˆ  PK   n‚~H±úe…‚  ç  H         ¤Ü,{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/io_apic.hUT üûVux [I  ˆ  PK   n‚~H5Ÿr  ú
+  J         ¤à.{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/fixmap_32.hUT üûVux [I  ˆ  PK   n‚~HŠ‰Ï—X  ›  F         ¤Ö2{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/types.hUT üûVux [I  ˆ  PK   n‚~HšÕ5P  5  I         ¤®5{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/math_emu.hUT üûVux [I  ˆ  PK   n‚~H2t<9½  ·  L         ¤8{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/irqflags_32.hUT üûVux [I  ˆ  PK   n‚~Hå.a„ƒ  é  J         ¤Ä;{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/semaphore.hUT üûVux [I  ˆ  PK   n‚~H|³-û‚  ç  H         ¤Ë={android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/genapic.hUT üûVux [I  ˆ  PK   n‚~H‚&36ƒ  æ  G         ¤Ï?{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/hw_irq.hUT üûVux [I  ˆ  PK   n‚~HÁ(»«  ,  F         ¤ÓA{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/div64.hUT üûVux [I  ˆ  PK   n‚~HŸ½(  (  D         ¤şD{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/mmu.hUT üûVux [I  ˆ  PK   n‚~H<{„§  ¡  J         ¤¤G{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/bitops_32.hUT üûVux [I  ˆ  PK   n‚~Hò»íX    O         ¤ÏJ{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/spinlock_types.hUT üûVux [I  ˆ  PK   n‚~HŞná6¨  º  D         ¤°M{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/ldt.hUT üûVux [I  ˆ  PK   n‚~H‰R¨ÔÄ  lA  J         ¤ÖP{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/unistd_32.hUT üûVux [I  ˆ  PK   n‚~H¦â¨d½    K         ¤]{android-ndk-r11c/platforms/android-16/arch-x86/usr/include/asm/segment_32.hUT üûVux [I  ˆ  

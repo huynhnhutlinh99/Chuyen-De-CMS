@@ -224,7 +224,7 @@ switch ( $action ) {
 		if ( ! IS_PROFILE_PAGE ) {
 			if ( current_user_can( 'create_users' ) ) {
 				?>
-		<a href="user-new.php" class="page-title-action"><?php echo esc_html_x( 'Add New', 'user' ); ?></a>
+		<a href="user-new.php" class="page-title-action"><?php echo esc_html_x( 'Add Users', 'user' ); ?></a>
 	<?php } elseif ( is_multisite() && current_user_can( 'promote_users' ) ) { ?>
 		<a href="user-new.php" class="page-title-action"><?php echo esc_html_x( 'Add Existing', 'user' ); ?></a>
 				<?php
